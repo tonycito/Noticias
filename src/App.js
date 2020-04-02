@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component, Fragment} from 'react';
+import Header from './componentes/Header';
+import ListaNoticias from './componentes/ListaNoticias';
+import Formulario from './componentes/Formulario';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    noticias: []
+  }
+
+  componentDidMount(){
+    this.consultarNoticias();
+
+  }
+  consultarNoticias = async (categoria = 'general') => {
+        const url = `https://newsapi.org/v2/top-headlines?country=mx&category=${categoria}&apiKey=c1ab53f3f0d04a6692fbf1378b95e90b` 
+    
+    const respuesta = await fetch(url);
+    const noticas = await respuesta.json();
+
+    this.setState({
+      noticias : noticas.articles
+    })
+  }
+  render(){
+    return(
+      <Fragment>
+         <Header 
+           titulo = 'Noticias del Mexico'
+         />
+         <div className="container white contenedor-noticias">
+           <Formulario
+             consultarNoticias={this.consultarNoticias}
+           />
+           <ListaNoticias 
+             noticias={this.state.noticias}
+           />
+         </div>
+      </Fragment>
+    );
+  }
 }
 
 export default App;
